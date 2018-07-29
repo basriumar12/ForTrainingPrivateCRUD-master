@@ -3,6 +3,7 @@ package com.blogbasbas.fortraining.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,10 +46,11 @@ public class AdapterBerita extends RecyclerView.Adapter<AdapterBerita.MyViewHold
         holder.tvJudul.setText(berita.get(position).getTitle());
         holder.tvTglTerbit.setText(berita.get(position).getPublishDate());
         holder.tvPenulis.setText("Oleh : " + berita.get(position).getPublisher());
+        Log.e("TAG"," ADapter :"+berita.get(position).getFoto());
 
         // Set image ke widget dengna menggunakan Library Piccasso
         // krena imagenya dari internet
-        Picasso.with(context).load(MyConstant.THUMBNAILS_URL + berita.get(position).getFoto()).into(holder.ivGambarBerita);
+        Picasso.get().load(MyConstant.THUMBNAILS_URL + berita.get(position).getFoto()).into(holder.ivGambarBerita);
 
         // Event klik ketika item list nya di klik
         holder.itemView.setOnClickListener(new View.OnClickListener() {

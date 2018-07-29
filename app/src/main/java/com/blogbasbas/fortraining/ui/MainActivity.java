@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -55,18 +56,21 @@ import retrofit2.Response;
          call.enqueue(new Callback<ResponseBerita>() {
              @Override
              public void onResponse(Call<ResponseBerita> call, Response<ResponseBerita> response) {
-                 if(response.isSuccessful()==true){
+                 if(response.body().getStatus()){
                      List<BeritaItem> berita = response.body().getBerita();
                      AdapterBerita adapterBerita = new AdapterBerita(MainActivity.this,berita);
                      swipeRefreshLayout.setRefreshing(false);
                      recyclerView.setAdapter(adapterBerita);
 
+                 } else {
+                     simpleToast("data tak ada");
                  }
              }
 
              @Override
              public void onFailure(Call<ResponseBerita> call, Throwable t) {
-
+                 simpleToast("gagal req jaringan "+t.getMessage());
+                 Log.e("Tag","error jaringan "+t.getLocalizedMessage());
              }
          });
      }
@@ -99,6 +103,9 @@ import retrofit2.Response;
               break;
             case R.id.menu_profil:
                 getProfil();
+                break;
+                case R.id.menu_add:
+               simpleIntent(InsertActivity.class);
                 break;
                 
                 default:

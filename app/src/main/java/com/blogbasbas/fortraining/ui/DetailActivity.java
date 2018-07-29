@@ -90,7 +90,7 @@ public class DetailActivity extends AppCompatActivity {
 
         tvPenulis.setText("Oleh : " + publisher);
         tvTglTerbit.setText(publishdate);
-        Picasso.with(DetailActivity.this).load(foto).into(ivGambarBerita);
+        Picasso.get().load(foto).into(ivGambarBerita);
         // Set isi berita sebagai html ke WebView
         wvKontenBerita.getSettings().setJavaScriptEnabled(true);
         wvKontenBerita.loadData(content, "text/html; charset=utf-8", "UTF-8");

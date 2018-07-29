@@ -39,13 +39,14 @@ public interface ApiServices {
                                         @Field("password") String password);
 
     // insert berita dengan multipart
+
     @Multipart
     @POST("insert.php")
     Call<ResponseBerita> postBerita(@Part("title") String title,
                                     @Part("content") String content,
                                     @Part MultipartBody.Part file,
                                     @Part("file") RequestBody name,
-                                    @Part("id_user") int id_user);
+                                    @Part("id_user") int iduser);
 
     //delete berita
     @FormUrlEncoded

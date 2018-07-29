@@ -14,7 +14,7 @@ public class UsernameItem{
 	private String lastActiveDate;
 
 	@SerializedName("id_user")
-	private String idUser;
+	private int idUser;
 
 	@SerializedName("fullname")
 	private String fullname;
@@ -49,11 +49,11 @@ public class UsernameItem{
 		return lastActiveDate;
 	}
 
-	public void setIdUser(String idUser){
+	public void setIdUser(int idUser){
 		this.idUser = idUser;
 	}
 
-	public String getIdUser(){
+	public int getIdUser(){
 		return idUser;
 	}
 

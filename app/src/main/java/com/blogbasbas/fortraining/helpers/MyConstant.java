@@ -12,9 +12,9 @@ public class MyConstant {
 //    public static final String THUMBNAILS_URL = "http://192.168.43.49:8080/myapi/thumbnails/";
 //    public static final String FOTO_URL = "http://192.168.43.49:8080/myapi/foto_berita/";
 
-    public static final String BASE_URL = "http://192.168.43.104/myapi/";
-    public static final String THUMBNAILS_URL = "http://192.168.43.104/myapi/thumbnails/";
-    public static final String FOTO_URL = "http://192.168.43.104/myapi/";
+    public static final String BASE_URL = "http://192.168.43.127/myapi/";
+    public static final String THUMBNAILS_URL = "http://192.168.43.127/myapi/thumbnails/";
+    public static final String FOTO_URL = "http://192.168.43.127/myapi/";
 
     // VERSION
     public static final String VERSION = "1.0.0";

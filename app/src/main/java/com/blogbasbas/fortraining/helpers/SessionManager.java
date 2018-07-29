@@ -19,6 +19,7 @@ public class SessionManager {
     private static final String pref_name = "crudpref";
     private static final String is_login = "islogin";
     public static final String kunci_username = "keyemail";
+    public static final String kunci_id = "id";
 
     public SessionManager(Context context) {
         this.context = context;
@@ -29,6 +30,7 @@ public class SessionManager {
     public void createSession(String email){
         editor.putBoolean(is_login, true);
         editor.putString(kunci_username, email);
+       // editor.putString(kunci_id, email);
         editor.commit();
     }
 
