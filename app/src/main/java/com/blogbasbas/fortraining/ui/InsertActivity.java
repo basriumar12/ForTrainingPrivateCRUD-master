@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.blogbasbas.fortraining.R;
 import com.blogbasbas.fortraining.helpers.MyFunction;
@@ -29,6 +30,7 @@ import com.blogbasbas.fortraining.model.ResponseBerita;
 import com.blogbasbas.fortraining.model.ResponseUser;
 import com.blogbasbas.fortraining.network.ApiServices;
 import com.blogbasbas.fortraining.network.InitRetrofit;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.HashMap;
@@ -112,6 +114,32 @@ public class InsertActivity extends MyFunction {
         getProfile();
 
 
+        Intent terima = getIntent();
+
+        id_berita = terima.getStringExtra("ID");
+        title = terima.getStringExtra("TITLE");
+        content = terima.getStringExtra("CONTENT");
+        foto = terima.getStringExtra("FOTO");
+
+        if(title.toString().equals("")){
+            btnInsertdata.setVisibility(View.VISIBLE);
+        }else{
+            btnInsertdata.setVisibility(View.GONE);
+            btnUpdate.setVisibility(View.VISIBLE);
+            btnhapus.setVisibility(View.VISIBLE);
+            lnVisible.setVisibility(View.VISIBLE);
+            fileName.setVisibility(View.VISIBLE);
+
+            String[] split = foto.split("/");
+            int cntFoto = split.length;
+
+            edtTitle.setText(title.toString());
+            edtContent.setText(content.toString());
+            fileName.setText(split[cntFoto-2]+"/"+split[cntFoto-1]);
+            Picasso.get().load(foto).into(imageView);
+        }
+
+
     }
 
     private void getProfile() {
@@ -174,11 +202,181 @@ public class InsertActivity extends MyFunction {
                 
                 break;
             case R.id.btnUpdate:
+                updateBerita();
                 break;
             case R.id.btnhapus:
+                deleteBerita();
                 break;
         }
     }
+
+    private void deleteBerita() {
+        progressDialog = ProgressDialog.show(mContext, null, "Loading...", true, false);
+
+        ApiServices api = InitRetrofit.getInstance();
+
+        Call<ResponseBerita> callDelete = api.requestDelete(Integer.parseInt(id_berita));
+        callDelete.enqueue(new Callback<ResponseBerita>() {
+            @Override
+            public void onResponse(Call<ResponseBerita> call, Response<ResponseBerita> response) {
+                if(response.isSuccessful()){
+                    if(response.body().getStatus()){
+                        msg = response.body().getMsg();
+                        Snackbar.make(parentView, msg, Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                        finish();
+                        progressDialog.dismiss();
+                    }else{
+                        if(response.body().getCode()==403){
+                            msg = response.body().getMsg();
+                            Snackbar.make(parentView, msg, Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
+                            progressDialog.dismiss();
+                        }else{
+                            if(response.body().getMsg().equals("Data not found.")){
+                                msg = response.body().getMsg();
+                                Snackbar.make(parentView, msg, Snackbar.LENGTH_LONG)
+                                        .setAction("Action", null).show();
+                                progressDialog.dismiss();
+                            }else{
+                                msg = response.body().getMsg();
+                                Snackbar.make(parentView, msg, Snackbar.LENGTH_LONG)
+                                        .setAction("Action", null).show();
+                                progressDialog.dismiss();
+                            }
+                        }
+                    }
+                }else{
+                    assert response.body() != null;
+                    progressDialog.dismiss();
+                    msg = response.body().getMsg();
+                    Snackbar.make(parentView, msg, Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                    Log.v("Response", response.body().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBerita> call, Throwable t) {
+                Snackbar.make(parentView, "Error connection, please check your internet.", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                progressDialog.dismiss();
+            }
+        });
+    }
+
+    private void updateBerita() {
+        progressDialog = ProgressDialog.show(mContext, null, "Uploading...", true, false);
+
+        String fn = fileName.getText().toString();
+
+        String[] ctsplit = fn.split("/");
+        int cntSplit = ctsplit.length;
+
+        if(cntSplit==2){
+            String ttl, ctn;
+            ttl = edtTitle.getText().toString();
+            ctn = edtContent.getText().toString();
+
+            ApiServices api = InitRetrofit.getInstance();
+
+            Call<ResponseBerita> callUpdate = api.requestUpdate(id_berita, ttl, ctn, "noupload");
+            callUpdate.enqueue(new Callback<ResponseBerita>() {
+                @Override
+                public void onResponse(Call<ResponseBerita> call, Response<ResponseBerita> response) {
+                    if (response.isSuccessful()) {
+                        if (response.body().getStatus()) {
+                            Toast.makeText(getApplicationContext(), response.body().getMsg(), Toast.LENGTH_SHORT).show();
+                            finish();
+                            progressDialog.dismiss();
+                        } else {
+                            progressDialog.dismiss();
+                            Toast.makeText(getApplicationContext(), response.body().getMsg(), Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        progressDialog.dismiss();
+                        Toast.makeText(getApplicationContext(), response.body().getMsg(), Toast.LENGTH_SHORT).show();
+                        assert response.body() != null;
+                        Log.v("Response", response.body().toString());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBerita> call, Throwable t) {
+                    Snackbar.make(parentView, "Error connection, please check your internet.", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                    progressDialog.dismiss();
+                }
+            });
+        }else{
+            // Map is used to multipart the file using okhttp3.RequestBody
+            file = new File(mediaPath);
+
+            // Parsing any Media type file
+            RequestBody requestBody = RequestBody.create(MediaType.parse("*/*"), file);
+            MultipartBody.Part fileToUpload = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
+            RequestBody filename = RequestBody.create(MediaType.parse("text/plain"), file.getName());
+
+            String ttl, ctn;
+            ttl = edtTitle.getText().toString();
+            ctn = edtContent.getText().toString();
+
+            ApiServices api = InitRetrofit.getInstance();
+
+            Call<ResponseBerita> callUpdate = api.requestUpdateFoto(Integer.parseInt(id_berita), ttl, ctn, fileToUpload, filename);
+            callUpdate.enqueue(new Callback<ResponseBerita>() {
+                @Override
+                public void onResponse(Call<ResponseBerita> call, Response<ResponseBerita> response) {
+                    if (response.isSuccessful()) {
+                        if (response.body().getStatus()) {
+                            Snackbar.make(parentView, response.body().getMsg().toString(), Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
+                            finish();
+                            progressDialog.dismiss();
+                        } else {
+                            if (response.body().getCode() == 400) {
+                                if(response.body().getMsg().equals("Failed updated.")){
+                                    Snackbar.make(parentView, response.body().getMsg().toString(), Snackbar.LENGTH_LONG)
+                                            .setAction("Action", null).show();
+                                    progressDialog.dismiss();
+                                }else{
+                                    Snackbar.make(parentView, response.body().getMsg().toString(), Snackbar.LENGTH_LONG)
+                                            .setAction("Action", null).show();
+                                    progressDialog.dismiss();
+                                }
+                            } else {
+                                if(response.body().getMsg().equals("Required field missing.")){
+                                    Snackbar.make(parentView, response.body().getMsg().toString(), Snackbar.LENGTH_LONG)
+                                            .setAction("Action", null).show();
+                                    progressDialog.dismiss();
+                                }else{
+                                    Snackbar.make(parentView, response.body().getMsg().toString(), Snackbar.LENGTH_LONG)
+                                            .setAction("Action", null).show();
+                                    progressDialog.dismiss();
+                                }
+                            }
+                        }
+                    } else {
+                        assert response.body() != null;
+                        progressDialog.dismiss();
+                        Snackbar.make(parentView, response.body().getMsg().toString(), Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                        Log.v("Response", response.body().toString());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBerita> call, Throwable t) {
+                    Snackbar.make(parentView, "Error connection, please check your internet.", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                    progressDialog.dismiss();
+                }
+            });
+        }
+    }
+
+
+
 
     private void insertBerita() {
 

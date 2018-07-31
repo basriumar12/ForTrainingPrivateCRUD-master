@@ -21,6 +21,7 @@ import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -42,7 +43,7 @@ public class DetailActivity extends AppCompatActivity {
     FloatingActionButton fab;
     Context mContext;
 
-    String title, content, publisher, publishdate, foto;
+    String idBerita,title, content, publisher, publishdate, foto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +79,7 @@ public class DetailActivity extends AppCompatActivity {
     private void addFormData() {
 
         Intent terima = getIntent();
-
+        idBerita = terima.getStringExtra("ID");
         title = terima.getStringExtra("TITLE");
         content = terima.getStringExtra("CONTENT");
         publisher = terima.getStringExtra("PUBLISHER");
@@ -95,5 +96,19 @@ public class DetailActivity extends AppCompatActivity {
         wvKontenBerita.getSettings().setJavaScriptEnabled(true);
         wvKontenBerita.loadData(content, "text/html; charset=utf-8", "UTF-8");
     }
+
+    @OnClick(R.id.fab)
+    public void onViewClicked() {
+        Intent kirim = new Intent(DetailActivity.this, InsertActivity.class);
+
+        kirim.putExtra("ID", idBerita.toString());
+        kirim.putExtra("TITLE", title.toString());
+        kirim.putExtra("CONTENT", content.toString());
+        kirim.putExtra("FOTO", foto.toString());
+
+        startActivity(kirim);
+        finish();
+    }
+
 
 }

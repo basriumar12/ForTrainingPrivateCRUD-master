@@ -59,6 +59,7 @@ public class AdapterBerita extends RecyclerView.Adapter<AdapterBerita.MyViewHold
                 // Mulai activity Detail
                 Intent varIntent = new Intent(context, DetailActivity.class);
                 // sisipkan data ke intent
+                varIntent.putExtra("ID", berita.get(position).getIdBerita());
                 varIntent.putExtra("TITLE", berita.get(position).getTitle());
                 varIntent.putExtra("TGL", berita.get(position).getPublishDate());
                 varIntent.putExtra("PUBLISHER", berita.get(position).getPublisher());
