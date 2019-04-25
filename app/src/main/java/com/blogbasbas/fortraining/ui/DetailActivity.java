@@ -59,19 +59,7 @@ public class DetailActivity extends AppCompatActivity {
 
         mContext = this;
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-                Intent share = new Intent();
-                share.setAction(Intent.ACTION_VIEW);
-                share.addCategory(Intent.CATEGORY_BROWSABLE);
-                share.setData(Uri.parse("https://www.instagram.com"));
-                startActivity(share);
-            }
-        });
+
 
         addFormData();
     }

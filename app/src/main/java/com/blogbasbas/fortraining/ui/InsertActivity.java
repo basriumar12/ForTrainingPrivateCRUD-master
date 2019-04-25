@@ -27,6 +27,7 @@ import com.blogbasbas.fortraining.helpers.MyFunction;
 import com.blogbasbas.fortraining.helpers.MyValidation;
 import com.blogbasbas.fortraining.helpers.SessionManager;
 import com.blogbasbas.fortraining.model.ResponseBerita;
+import com.blogbasbas.fortraining.model.ResponseInsert;
 import com.blogbasbas.fortraining.model.ResponseUser;
 import com.blogbasbas.fortraining.network.ApiServices;
 import com.blogbasbas.fortraining.network.InitRetrofit;
@@ -113,7 +114,6 @@ public class InsertActivity extends MyFunction {
         mContext = this;
         getProfile();
 
-
         Intent terima = getIntent();
 
         id_berita = terima.getStringExtra("ID");
@@ -121,24 +121,31 @@ public class InsertActivity extends MyFunction {
         content = terima.getStringExtra("CONTENT");
         foto = terima.getStringExtra("FOTO");
 
-        if(title.toString().equals("")){
-            btnInsertdata.setVisibility(View.VISIBLE);
-        }else{
-            btnInsertdata.setVisibility(View.GONE);
-            btnUpdate.setVisibility(View.VISIBLE);
-            btnhapus.setVisibility(View.VISIBLE);
-            lnVisible.setVisibility(View.VISIBLE);
-            fileName.setVisibility(View.VISIBLE);
+        try {
+            if(title.toString().equals("")){
+                btnInsertdata.setVisibility(View.VISIBLE);
+            }else{
+                btnInsertdata.setVisibility(View.GONE);
+                btnUpdate.setVisibility(View.VISIBLE);
+                btnhapus.setVisibility(View.VISIBLE);
+                lnVisible.setVisibility(View.VISIBLE);
+                fileName.setVisibility(View.VISIBLE);
 
-            String[] split = foto.split("/");
-            int cntFoto = split.length;
+                String[] split = foto.split("/");
+                int cntFoto = split.length;
 
-            edtTitle.setText(title.toString());
-            edtContent.setText(content.toString());
-            fileName.setText(split[cntFoto-2]+"/"+split[cntFoto-1]);
-            Picasso.get().load(foto).into(imageView);
+                edtTitle.setText(title.toString());
+                edtContent.setText(content.toString());
+                fileName.setText(split[cntFoto-2]+"/"+split[cntFoto-1]);
+                Picasso.get().load(foto).into(imageView);
+            }
+
+
+        }catch (NullPointerException e){
+            e.printStackTrace();
+            e.getMessage();
+           simpleToast("Null Data");
         }
-
 
     }
 
@@ -396,12 +403,12 @@ public class InsertActivity extends MyFunction {
 
 
         ApiServices getResponse = InitRetrofit.getInstance();
-        Call<ResponseBerita> call = getResponse.postBerita(title, content, fileToUpload, filename, id_user);
-        call.enqueue(new Callback<ResponseBerita>() {
+        Call<ResponseInsert> call = getResponse.postBerita(title, content, fileToUpload, filename, id_user);
+        call.enqueue(new Callback<ResponseInsert>() {
             @Override
-            public void onResponse(Call<ResponseBerita> call, Response<ResponseBerita> response) {
+            public void onResponse(Call<ResponseInsert> call, Response<ResponseInsert> response) {
 
-                    if (response.body().getStatus()) {
+                    if (response.body().getCode().equals("201")) {
                         Snackbar.make(parentView, "Berhasil Insert", Snackbar.LENGTH_LONG)
                                 .setAction("Action", null).show();
                         simpleIntent(MainActivity.class);
@@ -417,10 +424,9 @@ public class InsertActivity extends MyFunction {
 
 
             @Override
-            public void onFailure(Call<ResponseBerita> call, Throwable t) {
-                Snackbar.make(parentView, "Cek Jaringan", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onFailure(Call<ResponseInsert> call, Throwable t) {
                 progressDialog.dismiss();
+                finish();
                 Log.e("TAG","Error jaringan "+t.getMessage());
 
             }

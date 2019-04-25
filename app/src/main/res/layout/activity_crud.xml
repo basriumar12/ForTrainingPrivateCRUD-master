@@ -25,7 +25,7 @@
             android:id="@+id/edt_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="News Title"
+            android:hint="Masukan Judul"
             android:inputType="textCapWords"/>
     </LinearLayout>
 
@@ -44,7 +44,8 @@
             android:id="@+id/edt_content"
             android:layout_width="match_parent"
             android:layout_height="150dp"
-            android:hint="News Content"
+            android:hint="Msaukan aktivitas"
+            android:lines="3"
             android:inputType="textCapSentences|textMultiLine" />
     </LinearLayout>
 

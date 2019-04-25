@@ -63,7 +63,7 @@ import retrofit2.Response;
                      recyclerView.setAdapter(adapterBerita);
 
                  } else {
-                     simpleToast("data tak ada");
+                 //    simpleToast("data tak ada");
                  }
              }
 

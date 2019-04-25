@@ -2,6 +2,7 @@ package com.blogbasbas.fortraining.network;
 
 
 import com.blogbasbas.fortraining.model.ResponseBerita;
+import com.blogbasbas.fortraining.model.ResponseInsert;
 import com.blogbasbas.fortraining.model.ResponseLogin;
 import com.blogbasbas.fortraining.model.ResponseUser;
 
@@ -42,7 +43,7 @@ public interface ApiServices {
 
     @Multipart
     @POST("insert.php")
-    Call<ResponseBerita> postBerita(@Part("title") String title,
+    Call<ResponseInsert> postBerita(@Part("title") String title,
                                     @Part("content") String content,
                                     @Part MultipartBody.Part file,
                                     @Part("file") RequestBody name,
