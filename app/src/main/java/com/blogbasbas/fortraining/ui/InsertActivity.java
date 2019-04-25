@@ -434,7 +434,6 @@ public class InsertActivity extends MyFunction {
     }
 
 
-    //vervikasi permission storage
 
     public static void verifyStoragePermissions(Activity activity) {
         // Check if we have write permission
