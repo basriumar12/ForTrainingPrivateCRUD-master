@@ -154,6 +154,10 @@ public class InsertActivity extends MyFunction {
         HashMap<String, String> user = sessionManager.getUserDetails();
         String userProfile = user.get(SessionManager.kunci_username);
         Log.e("TAG","Hasil dari session "+userProfile);
+
+        progressDialog.setTitle("loading");
+     //   progressDialog.setMessage("get data profile");
+        progressDialog.show();
         ApiServices api = InitRetrofit.getInstance();
         Call<ResponseUser> call = api.requestProfil(userProfile);
         call.enqueue(new Callback<ResponseUser>() {
@@ -162,9 +166,12 @@ public class InsertActivity extends MyFunction {
                 if (response.isSuccessful()){
                         id_user = response.body().getUsername().get(0).getIdUser();
                         Log.e("TAG","Hasil dari session "+id_user);
+                        progressDialog.dismiss();
                 }
                 else {
                     simpleToast("Gagal request data");
+                    progressDialog.dismiss();
+                    finish();
                 }
 
 
@@ -173,6 +180,8 @@ public class InsertActivity extends MyFunction {
             @Override
             public void onFailure(Call<ResponseUser> call, Throwable t) {
                 simpleToast("gagal jaringan");
+                progressDialog.dismiss();
+                finish();
             }
         });
 
